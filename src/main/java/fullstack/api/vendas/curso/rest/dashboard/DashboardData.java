@@ -15,7 +15,7 @@ public class DashboardData {
 	private Long clientes;
 	private Long vendas;
 	private List<VendasPorMes> vendasPorMes;
-	
+
 	public DashboardData(Long produtos, Long clientes, Long vendas, List<VendasPorMes> vendasPorMes) {
 		super();
 		this.produtos = produtos;
@@ -24,28 +24,33 @@ public class DashboardData {
 		this.vendasPorMes = vendasPorMes;
 		this.preencherMesesFaltantes();
 	}
-	
+
 	public Long getProdutos() {
 		return produtos;
 	}
+
 	public void setProdutos(Long produtos) {
 		this.produtos = produtos;
 	}
+
 	public Long getClientes() {
 		return clientes;
 	}
+
 	public void setClientes(Long clientes) {
 		this.clientes = clientes;
 	}
+
 	public Long getVendas() {
 		return vendas;
 	}
+
 	public void setVendas(Long vendas) {
 		this.vendas = vendas;
 	}
 
 	public List<VendasPorMes> getVendasPorMes() {
-		if(vendasPorMes == null) {
+		if (vendasPorMes == null) {
 			vendasPorMes = new ArrayList<>();
 		}
 		return vendasPorMes;
@@ -54,33 +59,37 @@ public class DashboardData {
 	public void setVendasPorMes(List<VendasPorMes> vendasPorMes) {
 		this.vendasPorMes = vendasPorMes;
 	}
-	
+
 	public void preencherMesesFaltantes() {
-		int mesMaximo = getVendasPorMes().stream().mapToInt(VendasPorMes::getMes).max().getAsInt();
-		
-		List<Integer> listaMeses = IntStream.rangeClosed(1, mesMaximo).boxed().collect(Collectors.toList());
-		
-		List<Integer> mesesAdicionados = getVendasPorMes().stream().map(VendasPorMes::getMes).collect(Collectors.toList());
-		
-		listaMeses.stream().forEach(mes -> {
-			if(!mesesAdicionados.contains(mes)) {
-				VendasPorMes vendaPorMes = new VendasPorMes() {
-					
-					@Override
-					public BigDecimal getValor() {
-						return BigDecimal.ZERO;
-					}
-					
-					@Override
-					public Integer getMes() {
-						return mes;
-					}
-				};
-				
-				getVendasPorMes().add(vendaPorMes);
-			}
-		});
-		
-		getVendasPorMes().sort(Comparator.comparing(VendasPorMes::getMes));
+		if (!getVendasPorMes().isEmpty()) {
+
+			int mesMaximo = getVendasPorMes().stream().mapToInt(VendasPorMes::getMes).max().getAsInt();
+
+			List<Integer> listaMeses = IntStream.rangeClosed(1, mesMaximo).boxed().collect(Collectors.toList());
+
+			List<Integer> mesesAdicionados = getVendasPorMes().stream().map(VendasPorMes::getMes)
+					.collect(Collectors.toList());
+
+			listaMeses.stream().forEach(mes -> {
+				if (!mesesAdicionados.contains(mes)) {
+					VendasPorMes vendaPorMes = new VendasPorMes() {
+
+						@Override
+						public BigDecimal getValor() {
+							return BigDecimal.ZERO;
+						}
+
+						@Override
+						public Integer getMes() {
+							return mes;
+						}
+					};
+
+					getVendasPorMes().add(vendaPorMes);
+				}
+			});
+
+			getVendasPorMes().sort(Comparator.comparing(VendasPorMes::getMes));
+		}
 	}
 }
